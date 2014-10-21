@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="chance.min.js" ></script>
+    <script>
+
+
+      function fillForm(e){
+        if(e.command == "fillForm"){
+          safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("fillForm");
+        }
+      }
+
+      function getDataForType(e){
+        if(e.name == 'getDataForType'){
+          value = chance[e.message.type]();
+          safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("fillFormInput", {value: value, inputName: e.message.inputName});
+        }
+      }
+
+      safari.application.addEventListener("command", fillForm, false);
+      safari.application.addEventListener("message", getDataForType, false);
+
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>
