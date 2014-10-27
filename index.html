@@ -5,21 +5,29 @@
     <script>
 
 
-      function fillForm(e){
+      function handleCommand(e){
         if(e.command == "fillForm"){
           safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("fillForm");
         }
       }
 
-      function getDataForType(e){
+      function handleMessage(e){
         if(e.name == 'getDataForType'){
-          value = chance[e.message.type]();
-          safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("fillFormInput", {value: value, inputName: e.message.inputName});
+          var options = typeof(e.message.options) != 'undefined' ? e.message.options : {};
+          value = chance[e.message.type](options);
+          safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("fillFormInput", {value: value, inputName: e.message.inputName, options: options});
+        }else if(e.name == 'getSettings'){
+          console.log(safari.extension.settings);
+          var settings = {
+            email_domain: safari.extension.settings.email_domain,
+            email_prefix: safari.extension.settings.email_prefix,
+          }
+          safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("updateSettings", settings);
         }
       }
 
-      safari.application.addEventListener("command", fillForm, false);
-      safari.application.addEventListener("message", getDataForType, false);
+      safari.application.addEventListener("command", handleCommand, false);
+      safari.application.addEventListener("message", handleMessage, false);
 
     </script>
   </head>
